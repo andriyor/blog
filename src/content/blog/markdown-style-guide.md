@@ -41,6 +41,8 @@ Itatur? Quiatae cullecum rem ent aut odis in re eossequodi nonsequ idebis ne sap
 
 ![blog placeholder](/blog-placeholder-about.jpg)
 
+![A rocketship in space](../../assets/_DSF0174-2.jpg)
+
 ## Blockquotes
 
 The blockquote element represents content that is quoted from another source, optionally with a citation which must be within a `footer` or `cite` element, and optionally with in-line changes such as annotations and abbreviations.
@@ -87,9 +89,11 @@ The blockquote element represents content that is quoted from another source, op
 
 ### Output
 
-| Italics   | Bold     | Code   |
-| --------- | -------- | ------ |
-| _italics_ | **bold** | `code` |
+| Italics                               | Bold     | Code   | fsdfsf | sdfsdf | sdfsf | sdfs | sdfsdf | sdfsdf | sdffs | sdfsdf | sdfsdf |
+| ------------------------------------- | -------- | ------ | ------ | ------ | ----- | ---- | ------ | ------ | ----- | ------ | ------ |
+| _italics_dfs<br>sdgdgdfg sdfsd sdfsdf | **bold** | `code` |        |        |       |      |        |        |       |        |        |
+|                                       |          |        |        |        |       |      |        |        |       |        |        |
+| sdfs                                  |          |        |        |        |       |      |        |        |       |        |        |
 
 ## Code Blocks
 

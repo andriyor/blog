@@ -66,3 +66,29 @@ Check out [our documentation](https://docs.astro.build) or jump into our [Discor
 ## Credit
 
 This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+
+## Deploy
+
+Build
+
+```sh
+pnpm run build
+```
+
+Copy build files to server
+
+```sh
+rsync -av ./dist username@remote-server-ip:/path/to/remote/destination/
+```
+
+Install static file server
+
+```sh
+npm i -g serve
+```
+
+Run
+
+```sh
+pm2 start 'serve -p 8080 ~/apps/astro-blog/dist' --name blog
+```
