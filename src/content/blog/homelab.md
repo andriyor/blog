@@ -43,6 +43,7 @@ Reasons why i want to write a blog:
 - Share knowledge and solutions to problems i encountered
 - Improve writing documentation and presentation skill
 - Personal fulfillment
+- Motivation to finish personal projects
 
 I was inspired by this blogs:
 
@@ -72,6 +73,8 @@ I was pleasantly surprised to see that my Raspberry Pi was using only around 500
 - Blog ~ 70mb
 - Bot ~ 60mb
 - Pi-hole ~30mb
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Paying $5/month for hosting is too much. 💩<br><br>Get an ESP32 and add needed parts for under $10.<br><br>Use a free Cloudflare Tunnel.<br><br>Enjoy self-hosting for free! 😎 <a href="https://t.co/lSNSzZA2yb">pic.twitter.com/lSNSzZA2yb</a></p>&mdash; Robin Faraj (@robin_faraj) <a href="https://twitter.com/robin_faraj/status/1854221407137284583?ref_src=twsrc%5Etfw">November 6, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 ## Conclusion
 
