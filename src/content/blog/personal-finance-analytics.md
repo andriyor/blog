@@ -6,7 +6,7 @@ heroImage: /mono-exel-cover.png
 ---
 ## Problem
 
-I use [monobank](https://monobank.ua/), and overall, it's a great bank with a user-friendly app. One feature I appreciate is the statistics page, which provides a general overview of spending. However, it falls short for me because I need more detailed and advanced insights into my finances.
+I use [monobank](https://monobank.ua/), and overall, it's a great bank with a user-friendly app. One feature I appreciate is the statistics page, which provides a general overview of spending. However, it isn't enough for me because I need more detailed and advanced insights about my finances.
 
 For instance, I’d like to see:
 
