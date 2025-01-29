@@ -51,6 +51,7 @@ I was inspired by this blogs:
 - [TransitiveBullsh.it](https://transitivebullsh.it/)
 - [Blog @ tonsky.me](https://tonsky.me/)
 - [Вастрик](https://vas3k.blog/)
+- [kettanaito.com](https://kettanaito.com/)
 
 I chose [Astro](https://github.com/withastro/astro) for my blog because it’s fast, lightweight, and easy to use. It supports writing content in Markdown, making post creation simple, and its performance-focused design ensures a great user experience.
 
