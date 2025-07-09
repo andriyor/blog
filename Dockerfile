@@ -1,8 +1,8 @@
 FROM node:lts AS build
 WORKDIR /app
 COPY . .
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm install --ignore-scripts
+RUN corepack enable
+RUN pnpm install --prod --frozen-lockfile
 RUN pnpm run build
 
 FROM httpd:2.4 AS runtime
