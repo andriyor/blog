@@ -6,8 +6,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
-	integrations: [mdx(), sitemap()],
-	// Astro 7 defaults to JSX whitespace rules, which drops spaces between inline elements.
-	compressHTML: true,
+  site: "https://oreh.uk",
+  integrations: [mdx(), sitemap()],
+  // Astro 7 defaults to JSX whitespace rules, which drops spaces between inline elements.
+  compressHTML: true,
 });
