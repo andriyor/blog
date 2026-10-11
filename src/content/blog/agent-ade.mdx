@@ -1,0 +1,31 @@
+---
+title: 'ADE — agent development environments'
+description: 'Apps for running several coding agents in parallel, compared to Claude Code in the JetBrains terminal.'
+pubDate: 'Oct 11 2026'
+---
+import ObsidianBase from 'astro-obsidian-base/ObsidianBase.astro';
+import agentAde from '../../data/bases/agent-ade.json';
+
+Apps for running several coding agents in parallel. Compared to Claude Code in the JetBrains terminal.
+
+<ObsidianBase base={agentAde} />
+
+## When it's worth it
+Only for **2+ agents in parallel**. For one agent at a time, the JetBrains terminal + Claude Code plugin is enough: IDE diff viewer, refactorings, inspections on the same files.
+
+## What they add over IDE terminal tabs
+- **Isolation** — each agent gets its own git worktree (Sculptor: container) automatically. Two agents in one checkout overwrite each other's files and break each other's builds. In JetBrains that's a manual `git worktree add` + a separate project window + re-indexing.
+- **Overview + notifications** — see which agent is working, waiting on a permission prompt, or done, without clicking through terminal tabs. cmux's main selling point.
+- **Per-task review and merge** — each agent's work is a separate branch/diff; compare attempts, keep one, throw the rest away.
+- **Away from the desk** — Orca, T3 Code, cmux (iOS beta) let you check on or answer an agent from the phone.
+
+## What they cost
+- No IDE while the agent works — navigation, inspections, debugger; review still ends up in the IDE.
+- Setup per worktree — dependency install, `.env` files, separate ports for running services.
+- Review is the bottleneck — 5 agents = 5 diffs to review, parallel branches can conflict on merge.
+- Young tools — T3 Code early, Sculptor beta, Vibe Kanban's company shut down.
+
+## Pick
+- Regularly 2–3 agents busy → **cmux** first: lightest step up, still a terminal + notifications/tabs, but no worktrees (set them up yourself).
+- Want worktrees handled → **Orca**.
+- Either way, review in JetBrains.
