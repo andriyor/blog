@@ -51,6 +51,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+			.prose :global(img:not(a img)) {
+				cursor: zoom-in;
+			}
 		</style>
 	</head>
 
@@ -81,5 +84,25 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			</article>
 		</main>
 		<Footer />
+		<script>
+			import PhotoSwipeLightbox from 'photoswipe/lightbox';
+			import 'photoswipe/style.css';
+
+			// Content images not already wrapped in a link open as one gallery per post.
+			const imgs = [...document.querySelectorAll<HTMLImageElement>('.prose img:not(a img)')];
+			// Built at click time: lazy images report naturalWidth 0 until loaded, so fall back to the width/height attributes.
+			const slides = () =>
+				imgs.map((img) => ({
+					src: img.currentSrc || img.src,
+					width: img.naturalWidth || img.width,
+					height: img.naturalHeight || img.height,
+					alt: img.alt,
+					element: img,
+				}));
+			const lightbox = new PhotoSwipeLightbox({ pswpModule: () => import('photoswipe') });
+			lightbox.addFilter('thumbEl', (thumbEl, data) => (data.element as HTMLImageElement) ?? thumbEl);
+			lightbox.init();
+			imgs.forEach((img, i) => img.addEventListener('click', () => lightbox.loadAndOpen(i, slides())));
+		</script>
 	</body>
 </html>
