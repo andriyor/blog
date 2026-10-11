@@ -183,7 +183,7 @@ importers:
         version: 7.3.8(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       astro-obsidian-base:
         specifier: github:andriyor/astro-obsidian-base
-        version: https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/109604756d6004b6744e0c9ead57ec7f44db0574(astro@7.3.8(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+        version: https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/37f96ec5edebb6368e26dbcc7181a777780d322c(astro@7.3.8(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       photoswipe:
         specifier: ^5.4.4
         version: 5.4.4
@@ -1031,8 +1031,8 @@ packages:
     resolution: {integrity: sha512-COROpnaoap1E2F000S62r6A60uHZnmlvomhfyT2DlTcrY1OrBKn2UhH7qn5wTC9zMvD0AY7csdPSNwKP+7WiQw==}
     engines: {node: '>= 0.4'}
 
-  astro-obsidian-base@https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/109604756d6004b6744e0c9ead57ec7f44db0574:
-    resolution: {gitHosted: true, integrity: sha512-+Z987Ud6nVmZRsgeGqfaJEGQyR8E48f6V5MdfML1zDDZ5uSATRPKtCymXOaYpQb/qONucnMr2g64RBN0G4vEZQ==, tarball: https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/109604756d6004b6744e0c9ead57ec7f44db0574}
+  astro-obsidian-base@https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/37f96ec5edebb6368e26dbcc7181a777780d322c:
+    resolution: {gitHosted: true, integrity: sha512-3JYKIMnjJMBedIlBkjt6QR/bs/GwOP/gPHyKR3wv84olhnkk6RXfxsnSCj9Dw0JISS3gL1pAAoRFDmY3KhykfQ==, tarball: https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/37f96ec5edebb6368e26dbcc7181a777780d322c}
     version: 0.1.0
     hasBin: true
     peerDependencies:
@@ -2686,7 +2686,7 @@ snapshots:
 
   aria-query@5.3.2: {}
 
-  astro-obsidian-base@https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/109604756d6004b6744e0c9ead57ec7f44db0574(astro@7.3.8(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)):
+  astro-obsidian-base@https://codeload.github.com/andriyor/astro-obsidian-base/tar.gz/37f96ec5edebb6368e26dbcc7181a777780d322c(astro@7.3.8(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       astro: 7.3.8(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
       mdbasequery: 0.0.2
