@@ -1,6 +1,6 @@
 ---
 title: Reproducible macOS environment with Homebrew
-description: Lorem ipsum dolor sit amet
+description: 'Keeping a fresh Mac clutter-free with a categorized Brewfile stored on GitHub, and why I skipped Nix.'
 pubDate: Jan 8 2025
 ---
 When I got a new Mac, I wanted a fresh, clutter-free setup without dragging along unnecessary apps from my previous machine. As i already use Homebrew for managing packages and love clarity of a categorized app list that keeps me organized and in control, I decided to create a  [Brewfile](https://gist.github.com/ChristopherA/a579274536aab36ea9966f301ff14f3f) - a single, well-structured list of all the essential apps and tools I truly need. I store this file in a Git repository on [GitHub](https://github.com/andriyor/environment/blob/master/Brewfile) to keep it synchronized across devices and easily share it with others.

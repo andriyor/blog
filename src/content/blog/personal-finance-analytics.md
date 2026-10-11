@@ -1,6 +1,6 @@
 ---
 title: Advanced Monobank transactions analytics
-description: Lorem ipsum dolor sit amet
+description: 'Pulling Monobank transactions through its API into a spreadsheet for deeper spending insights than the app offers.'
 pubDate: Nov 24 2024
 heroImage: /mono-exel-cover.png
 ---

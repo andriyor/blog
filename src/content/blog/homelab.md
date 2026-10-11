@@ -1,6 +1,6 @@
 ---
 title: Why you need to try homelab as developer
-description: Lorem ipsum dolor sit amet
+description: 'From an Arduino robot at university to self-hosting on a Raspberry Pi: a Telegram notifier, network-wide ad blocking and this blog.'
 pubDate: Nov 17 2024
 heroImage: /raspberry-pi-4-model-b_crop.jpg
 ---
