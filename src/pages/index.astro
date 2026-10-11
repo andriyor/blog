@@ -21,8 +21,27 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 				padding: 0;
 			}
+			li {
+				display: flex;
+				gap: 1.25em;
+				align-items: flex-start;
+				justify-content: space-between;
+			}
 			li + li {
 				margin-top: 2em;
+			}
+			.thumb-link {
+				flex: none;
+				order: 1;
+			}
+			.thumb {
+				display: block;
+				width: 200px;
+			}
+			@media (max-width: 720px) {
+				.thumb {
+					width: 96px;
+				}
 			}
 			.date {
 				margin: 0;
@@ -52,13 +71,20 @@ const posts = (await getCollection('blog')).sort(
 				{
 					posts.map((post) => (
 						<li>
-							<p class="date">
-								<FormattedDate date={post.data.pubDate} />
-							</p>
-							<h2 class="title">
-								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-							</h2>
-							<p class="description">{post.data.description}</p>
+							{post.data.heroImage && (
+								<a class="thumb-link" href={`/blog/${post.id}/`} tabindex="-1" aria-hidden="true">
+									<img class="thumb" src={post.data.heroImage} alt="" width={200} loading="lazy" />
+								</a>
+							)}
+							<div>
+								<p class="date">
+									<FormattedDate date={post.data.pubDate} />
+								</p>
+								<h2 class="title">
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								</h2>
+								<p class="description">{post.data.description}</p>
+							</div>
 						</li>
 					))
 				}
