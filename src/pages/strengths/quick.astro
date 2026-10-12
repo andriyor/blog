@@ -1,5 +1,6 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import Layout from '../../layouts/BlogPost.astro';
+import '../../styles/strengths.css';
 
 const DOMAINS = [
 	['exe', 'Executing', 'Making things happen'],
@@ -26,6 +27,10 @@ const SCALE = [
 			two statements, and your answers rank 34 talent themes across four domains. The statements
 			are original and the test is not scientifically validated, so treat the result as a
 			conversation starter rather than a diagnosis. 51 pairs, about 10 minutes.
+		</p>
+		<p>
+			Want a research-based result? Take the longer
+			<a href="/strengths/full">Character Strengths</a> test (213 statements, about 20 minutes).
 		</p>
 
 		<section id="sc-intro" class="sc-card">
@@ -90,14 +95,11 @@ const SCALE = [
 </Layout>
 
 <style is:global>
-	/* Global (prefixed) because results markup is generated at runtime. */
 	.sc {
 		--sc-exe: #7a3fb0;
 		--sc-inf: #c4561f;
 		--sc-rel: #1f7fb8;
 		--sc-str: #2a7d4d;
-		display: grid;
-		gap: 1.2em;
 	}
 	[data-theme='dark'] .sc {
 		--sc-exe: #b585e6;
@@ -105,203 +107,9 @@ const SCALE = [
 		--sc-rel: #5bb6eb;
 		--sc-str: #5cc48a;
 	}
-	.sc p {
-		margin: 0;
-	}
-	.sc h2 {
-		margin-top: 0.8em;
-	}
-	.sc-card {
-		border: 1px solid rgb(var(--gray-light));
-		border-radius: 10px;
-		padding: 1.2em;
-		display: grid;
-		gap: 1em;
-		margin: 0;
-		list-style: none;
-	}
-	.sc button {
-		font: inherit;
-		font-size: 0.85em;
-		cursor: pointer;
-		border-radius: 6px;
-		padding: 0.4em 1em;
-		border: 1px solid rgb(var(--gray-light));
-		background: rgb(var(--bg));
-		color: rgb(var(--black));
-	}
-	.sc button.sc-primary {
-		background: var(--accent);
-		border-color: var(--accent);
-		color: rgb(var(--bg));
-	}
-	.sc button:disabled {
-		opacity: 0.4;
-		cursor: default;
-	}
-	.sc button:focus-visible,
-	.sc-scale input:focus-visible + span {
-		outline: 2px solid var(--accent);
-		outline-offset: 2px;
-	}
-	.sc-row {
-		display: flex;
-		gap: 0.6em;
-		flex-wrap: wrap;
-		align-items: center;
-	}
-	.sc-split {
-		justify-content: space-between;
-	}
-	.sc-count {
-		font-size: 0.75em;
-		color: rgb(var(--gray));
-		font-variant-numeric: tabular-nums;
-	}
-	.sc-domains {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-		gap: 0.6em;
-	}
-	.sc-dom {
-		border-top: 3px solid var(--c);
-		padding-top: 0.4em;
-		line-height: 1.3;
-	}
-	.sc-dom b {
-		display: block;
-		color: rgb(var(--black));
-	}
-	.sc-dom span {
-		font-size: 0.75em;
-		color: rgb(var(--gray));
-	}
-	.sc-progress {
-		height: 4px;
-		background: rgb(var(--gray-light));
-		border-radius: 2px;
-		overflow: hidden;
-	}
-	.sc-progress i {
-		display: block;
-		height: 100%;
-		background: var(--accent);
-		transition: width 0.2s;
-	}
-	.sc-pair {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1em;
-		color: rgb(var(--black));
-	}
-	.sc-pair p:last-child {
-		text-align: right;
-	}
-	.sc-scale {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 0.4em;
-	}
-	.sc-scale label {
-		display: grid;
-		justify-items: center;
-		gap: 0.3em;
-		cursor: pointer;
-		font-size: 0.65em;
-		color: rgb(var(--gray));
-		text-align: center;
-		line-height: 1.2;
-	}
-	.sc-scale input {
-		position: absolute;
-		opacity: 0;
-	}
-	.sc-scale span {
-		width: 100%;
-		height: 2.4rem;
-		border: 1px solid rgb(var(--gray-light));
-		border-radius: 6px;
-		display: grid;
-		place-items: center;
-		font-size: 1.2rem;
-		color: rgb(var(--black));
-	}
-	.sc-scale input:checked + span {
-		background: var(--accent);
-		border-color: var(--accent);
-		color: rgb(var(--bg));
-	}
-	.sc-top li {
-		display: grid;
-		grid-template-columns: 2rem 1fr;
-		gap: 0.6em;
-	}
-	.sc-top .n {
-		font-weight: 700;
-		font-size: 1.5em;
-		line-height: 1.2;
-		color: var(--c);
-	}
-	.sc-top h3 {
-		margin: 0;
-		font-size: 1.1em;
-	}
-	.sc-tag {
-		font-size: 0.65em;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--c);
-	}
-	.sc-top p {
-		font-size: 0.85em;
-	}
-	.sc-all {
-		gap: 0;
-		font-size: 0.85em;
-	}
-	.sc-all li {
-		display: grid;
-		grid-template-columns: 2rem 1fr auto;
-		gap: 0.6em;
-		padding: 0.2em 0;
-		border-bottom: 1px solid rgb(var(--gray-light));
-		font-variant-numeric: tabular-nums;
-	}
-	.sc-dot {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-		background: var(--c);
-		display: inline-block;
-		margin-right: 0.5em;
-	}
-	.sc-r {
-		color: rgb(var(--gray));
-	}
-	.sc-bars .sc-lbl {
-		display: flex;
-		justify-content: space-between;
-		font-size: 0.85em;
-	}
-	.sc-bar {
-		height: 10px;
-		background: rgb(var(--gray-light));
-		border-radius: 5px;
-		overflow: hidden;
-	}
-	.sc-bar i {
-		display: block;
-		height: 100%;
-		background: var(--c);
-	}
 	@media (max-width: 480px) {
 		.sc-scale small {
 			display: none;
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.sc-progress i {
-			transition: none;
 		}
 	}
 </style>

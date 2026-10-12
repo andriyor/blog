@@ -1,0 +1,279 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+import '../../styles/strengths.css';
+
+const VIRTUES = [
+	['wisdom', 'Wisdom', 'Acquiring and using knowledge'],
+	['courage', 'Courage', 'Pushing through opposition'],
+	['humanity', 'Humanity', 'Caring for others'],
+	['justice', 'Justice', 'Building healthy communities'],
+	['temperance', 'Temperance', 'Protecting against excess'],
+	['transcendence', 'Transcendence', 'Connecting to something larger'],
+];
+// Standard IPIP response anchors.
+const SCALE = ['Very inaccurate', 'Moderately inaccurate', 'Neither', 'Moderately accurate', 'Very accurate'];
+---
+
+<Layout
+	title="Character Strengths"
+	description="A free 213-statement assessment of the 24 VIA character strengths, using the public-domain IPIP-VIA scales."
+>
+	<div class="sc">
+		<p>
+			This measures the 24 character strengths from Peterson and Seligman's Values in Action
+			classification, using the public-domain
+			<a href="https://ipip.ori.org/newVIAKey.htm">IPIP-VIA scales</a> from the International
+			Personality Item Pool. It is not the official VIA Survey, but the scales are research-based,
+			with reliabilities around .70 to .90. 213 statements, about 20 minutes.
+		</p>
+		<p>
+			Short on time? Try the quick <a href="/strengths/quick">Strengths Compass</a> instead (51 pairs,
+			about 10 minutes, not validated).
+		</p>
+
+		<section id="sc-intro" class="sc-card">
+			<div class="sc-domains">
+				{
+					VIRTUES.map(([k, name, desc]) => (
+						<div class="sc-dom" style={`--c: var(--sc-${k})`}>
+							<b>{name}</b>
+							<span>{desc}</span>
+						</div>
+					))
+				}
+			</div>
+			<p>
+				Describe yourself as you generally are now, not as you wish to be. Rate how accurately each
+				statement describes you. Keys 1 to 5 work too. Answers are kept in this browser so you can
+				resume later.
+			</p>
+			<div class="sc-row">
+				<button class="sc-primary" id="sc-start" type="button">Start</button>
+				<span class="sc-count" id="sc-resume"></span>
+			</div>
+		</section>
+
+		<section id="sc-quiz" class="sc-card" hidden>
+			<div class="sc-row sc-split">
+				<span class="sc-count" id="sc-qnum"></span><span class="sc-count" id="sc-qleft"></span>
+			</div>
+			<div class="sc-progress"><i id="sc-bar"></i></div>
+			<p class="sc-item" id="sc-item"></p>
+			<div class="sc-scale" id="sc-scale">
+				{
+					SCALE.map((label, v) => (
+						<label>
+							<input type="radio" name="sc-ans" id={`sc-ans${v}`} value={v + 1} />
+							<span>{v + 1}</span>
+							<small>{label}</small>
+						</label>
+					))
+				}
+			</div>
+			<div class="sc-row sc-split">
+				<button id="sc-back" type="button">Back</button>
+				<button class="sc-primary" id="sc-next" type="button" disabled>Next</button>
+			</div>
+		</section>
+
+		<section id="sc-results" hidden>
+			<h2>Your signature strengths</h2>
+			<ol class="sc-card sc-top" id="sc-top"></ol>
+			<h2>Virtues</h2>
+			<div class="sc-card sc-bars" id="sc-doms"></div>
+			<h2>All 24 strengths</h2>
+			<ol class="sc-card sc-all" id="sc-all"></ol>
+			<div class="sc-row">
+				<button id="sc-copy" type="button">Copy results</button>
+				<button id="sc-retake" type="button">Retake</button>
+				<span class="sc-count" id="sc-copied"></span>
+			</div>
+			<p class="sc-count">
+				Scores are the mean rating per scale from 1 to 5, with negatively keyed statements reversed.
+				Items: Goldberg et al. (2006), International Personality Item Pool. Classification: Peterson
+				&amp; Seligman (2004), Character Strengths and Virtues.
+			</p>
+		</section>
+	</div>
+</Layout>
+
+<style is:global>
+	.sc {
+		--sc-wisdom: #2f6fb3;
+		--sc-courage: #c4561f;
+		--sc-humanity: #b8336a;
+		--sc-justice: #6a4bb5;
+		--sc-temperance: #2a7d4d;
+		--sc-transcendence: #a87a12;
+	}
+	[data-theme='dark'] .sc {
+		--sc-wisdom: #6aaaf0;
+		--sc-courage: #f08a52;
+		--sc-humanity: #ec77a6;
+		--sc-justice: #a58bf0;
+		--sc-temperance: #5cc48a;
+		--sc-transcendence: #e2b44a;
+	}
+	@media (max-width: 480px) {
+		.sc-scale small {
+			font-size: 0.85em;
+		}
+	}
+</style>
+
+<script>
+	import SCALES from '../../data/ipip-via.json';
+
+	const VIRTUE_NAMES: Record<string, string> = {
+		wisdom: 'Wisdom',
+		courage: 'Courage',
+		humanity: 'Humanity',
+		justice: 'Justice',
+		temperance: 'Temperance',
+		transcendence: 'Transcendence',
+	};
+
+	// Flatten to [scale index, statement, key]; key 1 = positively keyed, -1 = reversed.
+	const ITEMS: [number, string, number][] = SCALES.flatMap((s, si) =>
+		s.items.map(([text, key]) => [si, String(text), Number(key)] as [number, string, number]),
+	);
+	// Fixed-seed shuffle keeps the order stable when resuming.
+	let seed = 7;
+	const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+	for (let i = ITEMS.length - 1; i > 0; i--) {
+		const k = Math.floor(rnd() * (i + 1));
+		[ITEMS[i], ITEMS[k]] = [ITEMS[k], ITEMS[i]];
+	}
+
+	const KEY = 'strengths-ipip-via-v1';
+	let answers: (number | null)[] = [];
+	try {
+		answers = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+	} catch {}
+	const save = () => {
+		try {
+			localStorage.setItem(KEY, JSON.stringify(answers));
+		} catch {}
+	};
+	const answered = () => answers.filter((a) => a != null).length;
+	let idx = 0;
+	const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(`sc-${id}`) as T;
+
+	if (answered()) {
+		$('resume').textContent =
+			answered() >= ITEMS.length
+				? 'Saved result available'
+				: `${answered()} of ${ITEMS.length} answered. Start resumes.`;
+	}
+
+	const show = (id: string) => ['intro', 'quiz', 'results'].forEach((s) => ($(s).hidden = s !== id));
+	const inQuiz = () => !$('quiz').hidden;
+
+	function render() {
+		$('item').textContent = ITEMS[idx][1];
+		$('qnum').textContent = `${idx + 1} / ${ITEMS.length}`;
+		$('qleft').textContent = `${ITEMS.length - answered()} left`;
+		$('bar').style.width = `${(answered() / ITEMS.length) * 100}%`;
+		document
+			.querySelectorAll<HTMLInputElement>('[name=sc-ans]')
+			.forEach((r) => (r.checked = Number(r.value) === answers[idx]));
+		const next = $<HTMLButtonElement>('next');
+		next.disabled = answers[idx] == null;
+		next.textContent = idx === ITEMS.length - 1 ? 'See results' : 'Next';
+		$<HTMLButtonElement>('back').disabled = idx === 0;
+	}
+
+	function scores() {
+		const sum = SCALES.map(() => 0);
+		const n = SCALES.map(() => 0);
+		ITEMS.forEach(([si, , key], i) => {
+			const v = answers[i];
+			if (v == null) return;
+			sum[si] += key > 0 ? v : 6 - v;
+			n[si]++;
+		});
+		return SCALES.map((s, i) => ({ ...s, score: n[i] ? sum[i] / n[i] : 0 })).sort(
+			(x, y) => y.score - x.score,
+		);
+	}
+
+	function results() {
+		const ranked = scores();
+		$('top').innerHTML = ranked
+			.slice(0, 5)
+			.map(
+				(t, i) =>
+					`<li style="--c:var(--sc-${t.virtue})"><span class="n">${i + 1}</span><div><span class="sc-tag">${VIRTUE_NAMES[t.virtue]}</span><h3>${t.name}</h3><p>${t.desc}</p></div></li>`,
+			)
+			.join('');
+		$('all').innerHTML = ranked
+			.map(
+				(t, i) =>
+					`<li style="--c:var(--sc-${t.virtue})"><span class="sc-r">${i + 1}</span><span><i class="sc-dot"></i>${t.name}</span><span class="sc-r">${t.score.toFixed(2)}</span></li>`,
+			)
+			.join('');
+		// Virtue bar: mean of its strengths' scores, mapped from the 1–5 scale onto 0–100%.
+		$('doms').innerHTML = Object.entries(VIRTUE_NAMES)
+			.map(([k, name]) => {
+				const ts = ranked.filter((t) => t.virtue === k);
+				const mean = ts.reduce((s, t) => s + t.score, 0) / ts.length;
+				const pct = Math.round(((mean - 1) / 4) * 100);
+				return `<div style="--c:var(--sc-${k})"><div class="sc-lbl"><span>${name}</span><span class="sc-r">${mean.toFixed(2)}</span></div><div class="sc-bar"><i style="width:${pct}%"></i></div></div>`;
+			})
+			.join('');
+		show('results');
+	}
+
+	function answer(v: number) {
+		answers[idx] = v;
+		save();
+		// Auto-advance keeps 213 statements quick; Back lets people fix a slip.
+		if (idx < ITEMS.length - 1) idx++;
+		render();
+	}
+
+	$('start').addEventListener('click', () => {
+		if (answered() >= ITEMS.length) return results();
+		const firstOpen = ITEMS.findIndex((_, i) => answers[i] == null);
+		idx = firstOpen === -1 ? 0 : firstOpen;
+		show('quiz');
+		render();
+	});
+	$('scale').addEventListener('change', (e) => answer(Number((e.target as HTMLInputElement).value)));
+	document.addEventListener('keydown', (e) => {
+		if (inQuiz() && /^[1-5]$/.test(e.key) && !e.metaKey && !e.ctrlKey && !e.altKey) answer(Number(e.key));
+	});
+	$('next').addEventListener('click', () => {
+		if (idx === ITEMS.length - 1) {
+			if (answered() >= ITEMS.length) return results();
+			idx = ITEMS.findIndex((_, i) => answers[i] == null);
+			render();
+		} else {
+			idx++;
+			render();
+		}
+	});
+	$('back').addEventListener('click', () => {
+		idx--;
+		render();
+	});
+	$('retake').addEventListener('click', () => {
+		answers = [];
+		save();
+		idx = 0;
+		$('resume').textContent = '';
+		show('intro');
+	});
+	$('copy').addEventListener('click', () => {
+		const text =
+			'My top character strengths (IPIP-VIA):\n' +
+			scores()
+				.slice(0, 5)
+				.map((t, i) => `${i + 1}. ${t.name} (${VIRTUE_NAMES[t.virtue]})`)
+				.join('\n');
+		navigator.clipboard.writeText(text).then(
+			() => ($('copied').textContent = 'Copied'),
+			() => ($('copied').textContent = 'Copy failed; select the list above instead'),
+		);
+	});
+</script>

@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+import '../../styles/strengths.css';
+
+const TESTS = [
+	{
+		href: '/strengths/quick',
+		name: 'Strengths Compass',
+		length: 'Shorter · 51 pairs · about 10 min',
+		about:
+			'Pick between two statements at a time. Ranks 34 talent themes across four domains, in the style of Gallup’s CliftonStrengths. Statements are my own and not validated.',
+	},
+	{
+		href: '/strengths/full',
+		name: 'Character Strengths',
+		length: 'Longer · 213 statements · about 20 min',
+		about:
+			'Rate how well each statement describes you. Ranks the 24 VIA character strengths using the public-domain, research-based IPIP-VIA scales.',
+	},
+];
+---
+
+<Layout
+	title="Strengths Tests"
+	description="Choose a quick 10-minute strengths quiz or a longer research-based character strengths test."
+>
+	<div class="sc">
+		<p>Two free strengths tests. Answers stay in your browser, so you can stop and come back later.</p>
+		<div class="sc-choose">
+			{
+				TESTS.map((t) => (
+					<a class="sc-card" href={t.href}>
+						<span class="sc-count">{t.length}</span>
+						<h2>{t.name}</h2>
+						<p>{t.about}</p>
+						<span class="sc-go">Start →</span>
+					</a>
+				))
+			}
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.sc-choose {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: 1em;
+	}
+	.sc-choose a {
+		align-content: start;
+		gap: 0.5em;
+		color: inherit;
+		text-decoration: none;
+		font-size: 0.9em;
+	}
+	.sc-choose a:hover,
+	.sc-choose a:focus-visible {
+		border-color: var(--accent);
+	}
+	.sc-choose a:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.sc .sc-choose h2 {
+		margin: 0;
+		font-size: 1.4em;
+	}
+	.sc-go {
+		color: var(--accent);
+	}
+</style>
