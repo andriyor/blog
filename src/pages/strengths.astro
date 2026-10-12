@@ -1,0 +1,492 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+
+const DOMAINS = [
+	['exe', 'Executing', 'Making things happen'],
+	['inf', 'Influencing', 'Taking charge and being heard'],
+	['rel', 'Relationship Building', 'Holding teams together'],
+	['str', 'Strategic Thinking', 'Absorbing and analyzing information'],
+];
+const SCALE = [
+	['◀◀', 'Strongly left'],
+	['◀', 'Left'],
+	['–', 'Neutral'],
+	['▶', 'Right'],
+	['▶▶', 'Strongly right'],
+];
+---
+
+<Layout
+	title="Strengths Compass"
+	description="An unofficial paired-statement self-assessment that ranks 34 talent themes across four domains."
+>
+	<div class="sc">
+		<p>
+			A self-assessment modeled on the structure of Gallup's CliftonStrengths: you choose between
+			two statements, and your answers rank 34 talent themes across four domains. The statements
+			are original and the test is not scientifically validated, so treat the result as a
+			conversation starter rather than a diagnosis. 51 pairs, about 10 minutes.
+		</p>
+
+		<section id="sc-intro" class="sc-card">
+			<div class="sc-domains">
+				{
+					DOMAINS.map(([k, name, desc]) => (
+						<div class="sc-dom" style={`--c: var(--sc-${k})`}>
+							<b>{name}</b>
+							<span>{desc}</span>
+						</div>
+					))
+				}
+			</div>
+			<p>
+				For each pair, pick the side that describes you better and how strongly. Go with your first
+				instinct; aim for about 20 seconds per pair. Answers are kept in this browser so you can
+				resume later.
+			</p>
+			<div class="sc-row">
+				<button class="sc-primary" id="sc-start" type="button">Start</button>
+				<span class="sc-count" id="sc-resume"></span>
+			</div>
+		</section>
+
+		<section id="sc-quiz" class="sc-card" hidden>
+			<div class="sc-row sc-split">
+				<span class="sc-count" id="sc-qnum"></span><span class="sc-count" id="sc-qleft"></span>
+			</div>
+			<div class="sc-progress"><i id="sc-bar"></i></div>
+			<div class="sc-pair"><p id="sc-left"></p><p id="sc-right"></p></div>
+			<div class="sc-scale" id="sc-scale">
+				{
+					SCALE.map(([sym, label], v) => (
+						<label>
+							<input type="radio" name="sc-ans" id={`sc-ans${v}`} value={v} />
+							<span>{sym}</span>
+							<small>{label}</small>
+						</label>
+					))
+				}
+			</div>
+			<div class="sc-row sc-split">
+				<button id="sc-back" type="button">Back</button>
+				<button class="sc-primary" id="sc-next" type="button" disabled>Next</button>
+			</div>
+		</section>
+
+		<section id="sc-results" hidden>
+			<h2>Your top five</h2>
+			<ol class="sc-card sc-top" id="sc-top"></ol>
+			<h2>Domains</h2>
+			<div class="sc-card sc-bars" id="sc-doms"></div>
+			<h2>All 34 themes</h2>
+			<ol class="sc-card sc-all" id="sc-all"></ol>
+			<div class="sc-row">
+				<button id="sc-copy" type="button">Copy results</button>
+				<button id="sc-retake" type="button">Retake</button>
+				<span class="sc-count" id="sc-copied"></span>
+			</div>
+		</section>
+	</div>
+</Layout>
+
+<style is:global>
+	/* Global (prefixed) because results markup is generated at runtime. */
+	.sc {
+		--sc-exe: #7a3fb0;
+		--sc-inf: #c4561f;
+		--sc-rel: #1f7fb8;
+		--sc-str: #2a7d4d;
+		display: grid;
+		gap: 1.2em;
+	}
+	[data-theme='dark'] .sc {
+		--sc-exe: #b585e6;
+		--sc-inf: #f08a52;
+		--sc-rel: #5bb6eb;
+		--sc-str: #5cc48a;
+	}
+	.sc p {
+		margin: 0;
+	}
+	.sc h2 {
+		margin-top: 0.8em;
+	}
+	.sc-card {
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 10px;
+		padding: 1.2em;
+		display: grid;
+		gap: 1em;
+		margin: 0;
+		list-style: none;
+	}
+	.sc button {
+		font: inherit;
+		font-size: 0.85em;
+		cursor: pointer;
+		border-radius: 6px;
+		padding: 0.4em 1em;
+		border: 1px solid rgb(var(--gray-light));
+		background: rgb(var(--bg));
+		color: rgb(var(--black));
+	}
+	.sc button.sc-primary {
+		background: var(--accent);
+		border-color: var(--accent);
+		color: rgb(var(--bg));
+	}
+	.sc button:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+	.sc button:focus-visible,
+	.sc-scale input:focus-visible + span {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.sc-row {
+		display: flex;
+		gap: 0.6em;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+	.sc-split {
+		justify-content: space-between;
+	}
+	.sc-count {
+		font-size: 0.75em;
+		color: rgb(var(--gray));
+		font-variant-numeric: tabular-nums;
+	}
+	.sc-domains {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+		gap: 0.6em;
+	}
+	.sc-dom {
+		border-top: 3px solid var(--c);
+		padding-top: 0.4em;
+		line-height: 1.3;
+	}
+	.sc-dom b {
+		display: block;
+		color: rgb(var(--black));
+	}
+	.sc-dom span {
+		font-size: 0.75em;
+		color: rgb(var(--gray));
+	}
+	.sc-progress {
+		height: 4px;
+		background: rgb(var(--gray-light));
+		border-radius: 2px;
+		overflow: hidden;
+	}
+	.sc-progress i {
+		display: block;
+		height: 100%;
+		background: var(--accent);
+		transition: width 0.2s;
+	}
+	.sc-pair {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1em;
+		color: rgb(var(--black));
+	}
+	.sc-pair p:last-child {
+		text-align: right;
+	}
+	.sc-scale {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0.4em;
+	}
+	.sc-scale label {
+		display: grid;
+		justify-items: center;
+		gap: 0.3em;
+		cursor: pointer;
+		font-size: 0.65em;
+		color: rgb(var(--gray));
+		text-align: center;
+		line-height: 1.2;
+	}
+	.sc-scale input {
+		position: absolute;
+		opacity: 0;
+	}
+	.sc-scale span {
+		width: 100%;
+		height: 2.4rem;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 6px;
+		display: grid;
+		place-items: center;
+		font-size: 1.2rem;
+		color: rgb(var(--black));
+	}
+	.sc-scale input:checked + span {
+		background: var(--accent);
+		border-color: var(--accent);
+		color: rgb(var(--bg));
+	}
+	.sc-top li {
+		display: grid;
+		grid-template-columns: 2rem 1fr;
+		gap: 0.6em;
+	}
+	.sc-top .n {
+		font-weight: 700;
+		font-size: 1.5em;
+		line-height: 1.2;
+		color: var(--c);
+	}
+	.sc-top h3 {
+		margin: 0;
+		font-size: 1.1em;
+	}
+	.sc-tag {
+		font-size: 0.65em;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--c);
+	}
+	.sc-top p {
+		font-size: 0.85em;
+	}
+	.sc-all {
+		gap: 0;
+		font-size: 0.85em;
+	}
+	.sc-all li {
+		display: grid;
+		grid-template-columns: 2rem 1fr auto;
+		gap: 0.6em;
+		padding: 0.2em 0;
+		border-bottom: 1px solid rgb(var(--gray-light));
+		font-variant-numeric: tabular-nums;
+	}
+	.sc-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--c);
+		display: inline-block;
+		margin-right: 0.5em;
+	}
+	.sc-r {
+		color: rgb(var(--gray));
+	}
+	.sc-bars .sc-lbl {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.85em;
+	}
+	.sc-bar {
+		height: 10px;
+		background: rgb(var(--gray-light));
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	.sc-bar i {
+		display: block;
+		height: 100%;
+		background: var(--c);
+	}
+	@media (max-width: 480px) {
+		.sc-scale small {
+			display: none;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.sc-progress i {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	type Domain = 'exe' | 'inf' | 'rel' | 'str';
+	const DOMAIN_NAMES: Record<Domain, string> = {
+		exe: 'Executing',
+		inf: 'Influencing',
+		rel: 'Relationship Building',
+		str: 'Strategic Thinking',
+	};
+	// [theme, domain, description, three original statements]
+	const THEMES: [string, Domain, string, string[]][] = [
+		['Achiever', 'exe', 'You have a constant drive to get things done and feel satisfied by being productive.', ['I end most days needing to have finished something.', "I keep a running tally of what I've completed.", 'Idle days make me restless.']],
+		['Arranger', 'exe', 'You like coordinating many moving parts and finding the most effective setup.', ['I like juggling many pieces to find the best arrangement.', 'When plans change, I quickly reshuffle people and tasks.', 'I enjoy figuring out the most efficient configuration.']],
+		['Belief', 'exe', 'Strong core values give your life direction and your work meaning.', ['My core values guide my decisions.', 'I need my work to stand for something meaningful.', "I won't bend on what I believe is right."]],
+		['Consistency', 'exe', 'You care about fairness and treating people by clear, equal rules.', ['Everyone should be held to the same rules.', 'I value fairness over special treatment.', 'Clear, even-handed processes matter to me.']],
+		['Deliberative', 'exe', 'You weigh risks carefully and make decisions with caution.', ['I think through risks carefully before deciding.', "I'm careful about who I open up to.", "I'd rather be right than fast."]],
+		['Discipline', 'exe', 'You thrive on routine, structure, and order.', ['I like routines and structure in my day.', 'I keep my workspace and schedule orderly.', 'Predictable timelines help me do my best work.']],
+		['Focus', 'exe', 'You set a direction, prioritize, and stay on course.', ['I set clear goals and stay on track toward them.', "Detours that don't serve the goal annoy me.", 'I prioritize ruthlessly.']],
+		['Responsibility', 'exe', 'You take psychological ownership of what you commit to.', ['If I commit to something, I follow through no matter what.', "I feel personal ownership of anything I've promised.", 'Letting someone down bothers me for a long time.']],
+		['Restorative', 'exe', 'You are energized by diagnosing problems and fixing them.', ["I enjoy figuring out what's wrong and fixing it.", 'Problems energize me more than they drain me.', "I'm good at diagnosing why something broke."]],
+		['Activator', 'inf', 'You turn ideas into action and get things moving.', ["I'd rather start now and adjust than wait for a perfect plan.", 'Long discussions without action frustrate me.', "I'm usually the one who gets things moving."]],
+		['Command', 'inf', 'You take charge, speak plainly, and are comfortable with confrontation.', ["I'm comfortable taking charge in a crisis.", 'I say hard things directly.', "Conflict doesn't scare me away."]],
+		['Communication', 'inf', 'You put thoughts into words easily and make ideas come alive.', ['I find it easy to put thoughts into words.', 'I enjoy telling stories and presenting.', 'People say I explain things vividly.']],
+		['Competition', 'inf', 'You measure yourself against others and play to win.', ["I compare my performance with others'.", 'I play to win, not just to have fun.', 'Rankings and scoreboards motivate me.']],
+		['Maximizer', 'inf', 'You focus on strengths and push good toward excellent.', ["I'd rather turn something good into great than fix something weak.", "I'm drawn to excellence.", "I focus on strengths, mine and other people's."]],
+		['Self-Assurance', 'inf', 'You trust your own judgment and act with confidence.', ['I trust my own judgment, even when others disagree.', 'I feel confident in uncertain situations.', "I rarely need anyone's approval to act."]],
+		['Significance', 'inf', 'You want to make a visible impact and be recognized for it.', ['I want my contributions to be recognized.', 'I want to make a big, visible impact.', 'Being seen as credible and important matters to me.']],
+		['Woo', 'inf', 'You love meeting new people and winning them over.', ['I enjoy meeting strangers and winning them over.', 'Starting conversations comes naturally to me.', 'I like constantly expanding my network.']],
+		['Adaptability', 'rel', 'You go with the flow and respond well to the moment.', ['I go with the flow when plans change.', 'I live mostly in the present moment.', "Unexpected demands don't throw me off."]],
+		['Connectedness', 'rel', 'You see links between people and events and believe in a larger whole.', ['I believe things happen for a reason.', "I sense we're all part of something larger.", 'I see links between events others call coincidence.']],
+		['Developer', 'rel', 'You see potential in people and enjoy helping them grow.', ['I love seeing other people grow and improve.', 'I notice small signs of progress in people.', 'Coaching someone is deeply rewarding for me.']],
+		['Empathy', 'rel', "You sense other people's feelings as if they were your own.", ['I can sense how others are feeling.', 'People come to me when they need to feel understood.', 'I pick up on the emotions in a room.']],
+		['Harmony', 'rel', 'You look for consensus and common ground.', ['I look for common ground instead of conflict.', 'Arguments usually feel unproductive to me.', 'I prefer practical agreement over debate.']],
+		['Includer', 'rel', 'You make sure people feel accepted and part of the group.', ['I notice when someone is left out and bring them in.', 'I want everyone to feel part of the group.', 'The bigger the circle, the better.']],
+		['Individualization', 'rel', "You notice each person's uniqueness and work with it.", ['I notice what makes each person unique.', 'I tailor my approach to each individual.', "I'm good at figuring out who fits which role."]],
+		['Positivity', 'rel', 'Your enthusiasm is contagious and lifts the people around you.', ['My enthusiasm tends to rub off on others.', 'I find the upside in most situations.', 'I like to make things fun.']],
+		['Relator', 'rel', 'You value deep, genuine relationships with people you know well.', ['I prefer deep relationships with a few close people.', "I'm most comfortable with people I know well.", 'Trust builds slowly but deeply with me.']],
+		['Analytical', 'str', 'You search for reasons and causes and want evidence.', ["I want to see the data before I'm convinced.", 'I look for patterns and root causes.', "I question claims until they're proven."]],
+		['Context', 'str', 'You understand the present by looking at the past.', ['I look to the past to understand the present.', "Knowing a project's history helps me decide.", 'I like learning how things came to be.']],
+		['Futuristic', 'str', 'You are inspired by what could be and inspire others with it.', ["I'm inspired by what could be.", 'I often picture the future in vivid detail.', 'I energize others with a vision.']],
+		['Ideation', 'str', 'You are fascinated by ideas and finding connections between them.', ['I love brainstorming new ideas.', 'I enjoy linking things that seem unrelated.', 'Fresh concepts excite me.']],
+		['Input', 'str', 'You are curious and like to collect information, ideas, and things.', ['I collect information, objects, or ideas.', "I like to save what I find in case it's useful.", 'I always want to know more.']],
+		['Intellection', 'str', 'You enjoy thinking, reflection, and intellectual discussion.', ['I enjoy time alone to think.', 'I like deep intellectual discussions.', 'Reflection is one of my favorite activities.']],
+		['Learner', 'str', 'You love the process of learning more than the outcome.', ['Learning excites me more than the result.', 'I like picking up new skills.', 'I enjoy being a beginner at something.']],
+		['Strategic', 'str', 'You quickly spot patterns and alternative routes to a goal.', ['I quickly see different paths to a goal.', 'I spot problems in a plan before they happen.', 'I naturally ask "what if?" to find the best route.']],
+	];
+	const LEFT_PTS = [2, 1, 0.5, 0, 0];
+	const RIGHT_PTS = [0, 0, 0.5, 1, 2];
+
+	// Three rounds; each pairs every theme exactly once (rotate by s, first with last), so 51 unique pairs.
+	const PAIRS: [number, number, number][] = [];
+	[0, 5, 11].forEach((s, round) => {
+		for (let j = 0; j < 17; j++) PAIRS.push([(j + s) % 34, (33 - j + s) % 34, round]);
+	});
+	// Fixed-seed shuffle keeps the order stable when resuming.
+	let seed = 7;
+	const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+	for (let i = PAIRS.length - 1; i > 0; i--) {
+		const k = Math.floor(rnd() * (i + 1));
+		[PAIRS[i], PAIRS[k]] = [PAIRS[k], PAIRS[i]];
+	}
+	PAIRS.forEach((p) => {
+		if (rnd() < 0.5) [p[0], p[1]] = [p[1], p[0]];
+	});
+
+	const KEY = 'strengths-compass-v1';
+	let answers: (number | null)[] = [];
+	try {
+		answers = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+	} catch {}
+	const save = () => {
+		try {
+			localStorage.setItem(KEY, JSON.stringify(answers));
+		} catch {}
+	};
+	const answered = () => answers.filter((a) => a != null).length;
+	let idx = 0;
+	const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(`sc-${id}`) as T;
+
+	if (answered()) {
+		$('resume').textContent =
+			answered() >= PAIRS.length ? 'Saved result available' : `${answered()} of ${PAIRS.length} answered. Start resumes.`;
+	}
+
+	const show = (id: string) =>
+		['intro', 'quiz', 'results'].forEach((s) => ($(s).hidden = s !== id));
+
+	function render() {
+		const [a, b, round] = PAIRS[idx];
+		$('left').textContent = THEMES[a][3][round];
+		$('right').textContent = THEMES[b][3][round];
+		$('qnum').textContent = `${idx + 1} / ${PAIRS.length}`;
+		$('qleft').textContent = `${PAIRS.length - answered()} left`;
+		$('bar').style.width = `${(idx / PAIRS.length) * 100}%`;
+		document
+			.querySelectorAll<HTMLInputElement>('[name=sc-ans]')
+			.forEach((r) => (r.checked = Number(r.value) === answers[idx]));
+		const next = $<HTMLButtonElement>('next');
+		next.disabled = answers[idx] == null;
+		next.textContent = idx === PAIRS.length - 1 ? 'See results' : 'Next';
+		$<HTMLButtonElement>('back').disabled = idx === 0;
+	}
+
+	function scores() {
+		const s = THEMES.map(() => 0);
+		PAIRS.forEach(([a, b], i) => {
+			const v = answers[i];
+			if (v == null) return;
+			s[a] += LEFT_PTS[v];
+			s[b] += RIGHT_PTS[v];
+		});
+		return THEMES.map(([name, dom, desc], i) => ({ name, dom, desc, score: s[i] })).sort(
+			(x, y) => y.score - x.score,
+		);
+	}
+
+	function results() {
+		const ranked = scores();
+		$('top').innerHTML = ranked
+			.slice(0, 5)
+			.map(
+				(t, i) =>
+					`<li style="--c:var(--sc-${t.dom})"><span class="n">${i + 1}</span><div><span class="sc-tag">${DOMAIN_NAMES[t.dom]}</span><h3>${t.name}</h3><p>${t.desc}</p></div></li>`,
+			)
+			.join('');
+		$('all').innerHTML = ranked
+			.map(
+				(t, i) =>
+					`<li style="--c:var(--sc-${t.dom})"><span class="sc-r">${i + 1}</span><span><i class="sc-dot"></i>${t.name}</span><span class="sc-r">${t.score.toFixed(1)}</span></li>`,
+			)
+			.join('');
+		// Domain strength: average theme score as a share of the max per theme (3 pairs × 2 pts).
+		$('doms').innerHTML = (Object.keys(DOMAIN_NAMES) as Domain[])
+			.map((k) => {
+				const ts = ranked.filter((t) => t.dom === k);
+				const pct = Math.round((ts.reduce((s, t) => s + t.score, 0) / ts.length / 6) * 100);
+				return `<div style="--c:var(--sc-${k})"><div class="sc-lbl"><span>${DOMAIN_NAMES[k]}</span><span class="sc-r">${pct}%</span></div><div class="sc-bar"><i style="width:${pct}%"></i></div></div>`;
+			})
+			.join('');
+		show('results');
+	}
+
+	$('start').addEventListener('click', () => {
+		if (answered() >= PAIRS.length) return results();
+		const firstOpen = PAIRS.findIndex((_, i) => answers[i] == null);
+		idx = firstOpen === -1 ? 0 : firstOpen;
+		show('quiz');
+		render();
+	});
+	$('scale').addEventListener('change', (e) => {
+		answers[idx] = Number((e.target as HTMLInputElement).value);
+		save();
+		render();
+	});
+	$('next').addEventListener('click', () => {
+		if (idx === PAIRS.length - 1) results();
+		else {
+			idx++;
+			render();
+		}
+	});
+	$('back').addEventListener('click', () => {
+		idx--;
+		render();
+	});
+	$('retake').addEventListener('click', () => {
+		answers = [];
+		save();
+		idx = 0;
+		$('resume').textContent = '';
+		show('intro');
+	});
+	$('copy').addEventListener('click', () => {
+		const text =
+			'Strengths Compass top 5:\n' +
+			scores()
+				.slice(0, 5)
+				.map((t, i) => `${i + 1}. ${t.name} (${DOMAIN_NAMES[t.dom]})`)
+				.join('\n');
+		navigator.clipboard.writeText(text).then(
+			() => ($('copied').textContent = 'Copied'),
+			() => ($('copied').textContent = 'Copy failed; select the list above instead'),
+		);
+	});
+</script>
